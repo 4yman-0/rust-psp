@@ -16,12 +16,10 @@ use psp::vram_alloc::get_vram_allocator;
 use graphics::Align4;
 use graphics::sprite::{Sprite, Vertex};
 
-use fontdue;
-
 psp::module!("fontdue-scroller", 1, 0);
 
 const FONT: &[u8] = include_bytes!("../assets/Codystar-Regular.ttf") as &[u8];
-const TEXT: &'static str = "Rust-PSP";
+const TEXT: &str = "Rust-PSP";
 const BG_COLOR: u32 = 0xff00_0000;
 const FONT_COLOR: u32 = 0xff00_ffff;
 const LEN: usize = TEXT.len();
@@ -44,7 +42,7 @@ fn psp_main() {
     let texture_buffer = unsafe {
         slice::from_raw_parts_mut(
             texture_buffer.as_mut_ptr_direct_to_vram() as *mut u32,
-            LEN as usize * BUF_WIDTH * BUF_HEIGHT,
+            LEN * BUF_WIDTH * BUF_HEIGHT,
         )
     };
     let vertex_buffer = allocator.alloc_sized::<Vertex>(LEN as u32 * 2).unwrap();
@@ -66,7 +64,7 @@ fn psp_main() {
     let mut layout = fontdue::layout::Layout::new(fontdue::layout::CoordinateSystem::PositiveYUp);
     layout.reset(&fontdue::layout::LayoutSettings::default());
     layout.append(
-        &[font.clone()],
+        &[&font],
         &fontdue::layout::TextStyle::new(TEXT, 60.0, 0),
     );
     let x_positions = layout
@@ -113,8 +111,7 @@ fn psp_main() {
     let mut val = 80.0;
     loop {
         graphics::clear_color(BG_COLOR);
-        let mut j = 0;
-        for i in 0..LEN {
+        for (i, j) in (0..LEN).zip(0..LEN) {
             if let Some(mut sprite) = sprites[i] {
                 sprite.1.set_pos(
                     x_positions[i] + val as i32,
@@ -131,7 +128,6 @@ fn psp_main() {
                     1.0,
                 );
             }
-            j += 1;
         }
         graphics::finish_frame();
         val -= 1.0;

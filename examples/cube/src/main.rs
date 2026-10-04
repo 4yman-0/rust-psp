@@ -290,6 +290,7 @@ fn psp_main() {
     unsafe { psp_main_inner() }
 }
 
+#[allow(unsafe_op_in_unsafe_fn)]
 unsafe fn psp_main_inner() {
     psp::callback::setup_exit_callback().unwrap();
 

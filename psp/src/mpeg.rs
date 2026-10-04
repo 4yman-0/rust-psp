@@ -244,7 +244,7 @@ impl AvcDecoder {
         let ddr_block = unsafe {
             crate::sys::sceKernelAllocPartitionMemory(
                 crate::sys::SceSysMemPartitionId::SceKernelPrimaryUserPartition,
-                b"MeDdrTop\0".as_ptr(),
+                c"MeDdrTop".as_ptr().cast(),
                 crate::sys::SceSysMemBlockTypes::Low,
                 0x20_0000 + 0x40_0000, // 2MB + 4MB for alignment
                 core::ptr::null_mut(),
@@ -283,7 +283,7 @@ impl AvcDecoder {
         // Step 5: Create sceMpeg instance with mode + DDR top.
         let mpeg_storage = Box::into_raw(Box::new(core::ptr::null_mut::<c_void>()));
         let mpeg: crate::sys::SceMpeg =
-            unsafe { core::mem::transmute(mpeg_storage as *mut *mut c_void) };
+            unsafe { core::mem::transmute(mpeg_storage) };
         let ret = unsafe {
             crate::sys::sceMpegCreate(
                 mpeg,
@@ -346,7 +346,7 @@ impl AvcDecoder {
         }
 
         // Output pixel buffer — Psm8888 = 4 bytes/pixel.
-        let out_h = ((height + 15) / 16) * 16;
+        let out_h = height.div_ceil(16) * 16;
         let output_buf = vec![0u8; frame_width as usize * out_h as usize * 4];
 
         Ok(Self {
@@ -479,7 +479,7 @@ impl AvcDecoder {
         let bpp = 4usize;
         let h = self.height as usize;
         let stride = self.frame_width as usize;
-        let total = stride * ((h + 15) / 16 * 16) * bpp;
+        let total = stride * (h.div_ceil(16) * 16) * bpp;
 
         if dst.len() < total {
             return Err(MpegError(-1));
@@ -515,7 +515,7 @@ impl AvcDecoder {
         let bpp = 4usize;
         let h = self.height as usize;
         let stride = self.frame_width as usize;
-        let total = stride * ((h + 15) / 16 * 16) * bpp;
+        let total = stride * (h.div_ceil(16) * 16) * bpp;
 
         if dst.len() < total {
             return Err(MpegError(-1));
@@ -595,8 +595,8 @@ impl AvcDecoder {
         let csc_width = if info_w > 480 { 768i32 } else { 512 };
 
         let csc = Mp4AvcCscStruct {
-            height: ((info_h + 15) / 16) as i32,
-            width: ((info_w + 15) / 16) as i32,
+            height: info_h.div_ceil(16) as i32,
+            width: info_w.div_ceil(16) as i32,
             mode0: 0,
             mode1: 0,
             buffers: [
@@ -720,8 +720,8 @@ impl AvcDecoder {
         let csc_width = if info_w > 480 { 768i32 } else { 512 };
 
         let csc = Mp4AvcCscStruct {
-            height: ((info_h + 15) / 16) as i32,
-            width: ((info_w + 15) / 16) as i32,
+            height: info_h.div_ceil(16) as i32,
+            width: info_w.div_ceil(16) as i32,
             mode0: 0,
             mode1: 0,
             buffers: [

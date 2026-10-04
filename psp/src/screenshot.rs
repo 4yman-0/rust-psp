@@ -79,7 +79,7 @@ impl BmpHeader {
 fn rgba_to_bgra(rgba: u32) -> u32 {
     // 0xAABBGGRR -> 0xAARRGGBB
 
-    (rgba << 8 | rgba >> 24).swap_bytes()
+    rgba.rotate_left(8).swap_bytes()
 }
 
 fn rgb565_to_bgra(rgb565: u16) -> u32 {

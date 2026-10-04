@@ -6,7 +6,7 @@
 use core::ffi::c_void;
 
 use psp::font::{FontLib, FontRenderer};
-use psp::sys::font::{SceFontFamilyCode, SceFontLanguageCode, SceFontStyleCode};
+use psp::sys::{SceFontFamilyCode, SceFontLanguageCode, SceFontStyleCode};
 use psp::sys::{
     self, ClearBuffer, DisplayPixelFormat, GuContextType, GuState, GuSyncBehavior, GuSyncMode,
     TexturePixelFormat,
@@ -40,7 +40,7 @@ fn psp_main() {
     let atlas_vram = allocator
         .alloc_texture_pixels(512, 512, TexturePixelFormat::PsmT8)
         .unwrap()
-        .as_mut_ptr_direct();
+        .as_mut_ptr_direct_to_vram();
 
     // Initialize GU.
     unsafe {

@@ -29,7 +29,7 @@ impl Sprite {
     /// # Parameters
     ///
     /// - `texture`: A reference to a 16-byte aligned `u8` buffer of texture pixels.
-    /// Only used by the `draw` function.
+    ///   Only used by the `draw` function.
     /// - `color`: A 32-bit color in Big-Endian ABGR format (little-endian RGBA).
     /// - `x`: Starting horizontal position, in screen coordinates.
     /// - `y`: Starting vertical position, in screen coordinates.
@@ -168,15 +168,7 @@ impl Sprite {
 
 impl Clone for Sprite {
     fn clone(&self) -> Self {
-        Self {
-            color: self.color,
-            x: self.x,
-            y: self.y,
-            width: self.width,
-            height: self.height,
-            rotation_radians: self.rotation_radians,
-            scale: self.scale,
-        }
+        *self
     }
 }
 

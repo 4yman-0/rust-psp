@@ -156,7 +156,7 @@ impl SyscallHook {
             // 31 set, making them negative as i32. Only treat actual SCE
             // error codes (0x8000xxxx - 0x8007xxxx) as failures.
             let ret_u = ret as u32;
-            let is_error = ret_u >= 0x8000_0000 && ret_u < 0x8800_0000;
+            let is_error = matches!(&ret_u, 0x8000_0000..0x8800_0000);
             if !is_error {
                 // SAFETY: Flush caches so the patched syscall table is visible.
                 unsafe {
@@ -320,7 +320,7 @@ fn extract_j_target(instruction: u32, pc: u32) -> Option<u32> {
 /// These are PC-relative or use absolute offsets that would be wrong in
 /// a trampoline at a different address.
 fn is_branch_or_jump(instr: u32) -> bool {
-    matches!(instr >> 26, 1 | 2 | 3 | 4 | 5 | 6 | 7)
+    matches!(instr >> 26, 1..7)
 }
 
 /// Resolve a CFW function address from a firmware-patched import stub.

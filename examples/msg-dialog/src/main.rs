@@ -15,6 +15,7 @@ const SCR_WIDTH: i32 = 480;
 const SCR_HEIGHT: i32 = 272;
 const BUF_WIDTH: i32 = 512;
 
+#[allow(unsafe_op_in_unsafe_fn)]
 unsafe fn setup_gu() {
     sys::sceGuInit();
     sys::sceGuStart(GuContextType::Direct, &raw mut LIST as *mut c_void);

@@ -168,7 +168,7 @@ impl OskBuilder {
 
         for _ in 0..MAX_OSK_ITERATIONS {
             let status = unsafe { crate::sys::sceUtilityOskGetStatus() };
-            if status == 0 || status < 0 {
+            if status <= 0 {
                 break;
             }
 

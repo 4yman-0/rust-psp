@@ -100,10 +100,10 @@ pub fn clear_color(color: u32) {
 /// # Parameters
 ///
 /// - `vertices`: Reference to buffer of 4-byte aligned vertices. The buffer must be
-/// 16-byte aligned .
+///   16-byte aligned .
 /// - `texture`: Reference to buffer of texture. The buffer must be 16-byte aligned.
 /// - `texture_width`: Width of texture, must be a multiple of 4
-/// (see tbw docs for sceGuTexImage for more information).
+///   (see tbw docs for sceGuTexImage for more information).
 /// - `buffer_width`: Width of underlying texture buffer, must be power of 2.
 /// - `buffer_height`: Height of underlying texture buffer, must be power of 2.
 /// - `scale_x`: Horizontal scale factor.

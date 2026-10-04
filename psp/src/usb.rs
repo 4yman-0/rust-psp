@@ -30,7 +30,7 @@ pub const USB_STOR_PID: u32 = 0x1c8;
 pub fn start_bus() -> Result<(), UsbError> {
     let ret = unsafe {
         crate::sys::sceUsbStart(
-            b"USBBusDriver\0".as_ptr(),
+            c"USBBusDriver".as_ptr().cast(),
             0,
             core::ptr::null_mut::<c_void>(),
         )
@@ -42,7 +42,7 @@ pub fn start_bus() -> Result<(), UsbError> {
 pub fn stop_bus() -> Result<(), UsbError> {
     let ret = unsafe {
         crate::sys::sceUsbStop(
-            b"USBBusDriver\0".as_ptr(),
+            c"USBBusDriver".as_ptr().cast(),
             0,
             core::ptr::null_mut::<c_void>(),
         )
@@ -82,7 +82,7 @@ impl UsbStorageMode {
     pub fn activate() -> Result<Self, UsbError> {
         let ret = unsafe {
             crate::sys::sceUsbStart(
-                b"USBStor_Driver\0".as_ptr(),
+                c"USBStor_Driver".as_ptr().cast(),
                 0,
                 core::ptr::null_mut::<c_void>(),
             )
@@ -96,7 +96,7 @@ impl UsbStorageMode {
             // Clean up: stop the driver we just started.
             unsafe {
                 crate::sys::sceUsbStop(
-                    b"USBStor_Driver\0".as_ptr(),
+                    c"USBStor_Driver".as_ptr().cast(),
                     0,
                     core::ptr::null_mut::<c_void>(),
                 );
@@ -118,7 +118,7 @@ impl Drop for UsbStorageMode {
         unsafe {
             crate::sys::sceUsbDeactivate(USB_STOR_PID);
             crate::sys::sceUsbStop(
-                b"USBStor_Driver\0".as_ptr(),
+                c"USBStor_Driver".as_ptr().cast(),
                 0,
                 core::ptr::null_mut::<c_void>(),
             );

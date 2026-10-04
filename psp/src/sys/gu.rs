@@ -863,28 +863,27 @@ unsafe fn reset_values() {
     DRAW_BUFFER.width = 480;
     DRAW_BUFFER.height = 272;
 
-    for i in 0..CONTEXTS.len() {
-        let context = addr_of_mut!(CONTEXTS[i]);
-        (*context).scissor_enable = 0;
-        (*context).scissor_start = [0, 0];
-        (*context).scissor_end = [0, 0];
+    for context in CONTEXTS.iter_mut() {
+        context.scissor_enable = 0;
+        context.scissor_start = [0, 0];
+        context.scissor_end = [0, 0];
 
-        (*context).near_plane = 0;
-        (*context).far_plane = 1;
+        context.near_plane = 0;
+        context.far_plane = 1;
 
-        (*context).depth_offset = 0;
-        (*context).fragment_2x = 0;
-        (*context).texture_function = 0;
-        (*context).texture_proj_map_mode = TextureProjectionMapMode::Position;
-        (*context).texture_map_mode = TextureMapMode::TextureCoords;
-        (*context).sprite_mode[0] = 0;
-        (*context).sprite_mode[1] = 0;
-        (*context).sprite_mode[2] = 0;
-        (*context).sprite_mode[3] = 0;
-        (*context).clear_color = 0;
-        (*context).clear_stencil = 0;
-        (*context).clear_depth = 0xffff;
-        (*context).texture_mode = TexturePixelFormat::Psm5650;
+        context.depth_offset = 0;
+        context.fragment_2x = 0;
+        context.texture_function = 0;
+        context.texture_proj_map_mode = TextureProjectionMapMode::Position;
+        context.texture_map_mode = TextureMapMode::TextureCoords;
+        context.sprite_mode[0] = 0;
+        context.sprite_mode[1] = 0;
+        context.sprite_mode[2] = 0;
+        context.sprite_mode[3] = 0;
+        context.clear_color = 0;
+        context.clear_stencil = 0;
+        context.clear_depth = 0xffff;
+        context.texture_mode = TexturePixelFormat::Psm5650;
     }
 
     SETTINGS.sig = None;
@@ -1659,8 +1658,8 @@ pub unsafe extern "C" fn sceGuStart(context_type: GuContextType, list: *mut c_vo
         INIT = 1;
     }
 
-    if let GuContextType::Direct = CURR_CONTEXT {
-        if DRAW_BUFFER.frame_width != 0 {
+    if let GuContextType::Direct = CURR_CONTEXT
+        && DRAW_BUFFER.frame_width != 0 {
             send_command_i(
                 GeCommand::FrameBufPtr,
                 DRAW_BUFFER.frame_buffer as i32 & 0xffffff,
@@ -1671,7 +1670,6 @@ pub unsafe extern "C" fn sceGuStart(context_type: GuContextType, list: *mut c_vo
                     | DRAW_BUFFER.frame_width,
             );
         }
-    }
 }
 
 /// Finish current display list and go back to the parent context
@@ -2821,8 +2819,8 @@ pub unsafe extern "C" fn sceGuTexFunc(tfx: TextureEffect, tcc: TextureColorCompo
 /// - `width`: Width of texture map (must be a power of 2)
 /// - `height`: Height of texture map (must be a power of 2)
 /// - `tbw`: Texture Buffer Width (block-aligned). For `PixelFormat::8888`, this
-///    seems to have to be a multiple of 4. This value indicates the actual
-///    width of the image, not the width of the texture map.
+///   seems to have to be a multiple of 4. This value indicates the actual
+///   width of the image, not the width of the texture map.
 /// - `tbp`: Texture buffer pointer (16 byte aligned)
 ///
 /// # `width` vs `tbw`

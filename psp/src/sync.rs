@@ -443,7 +443,7 @@ impl<T> UncachedBox<T> {
     pub fn new(val: T) -> Result<Self, i32> {
         let size = core::mem::size_of::<T>().max(1) as u32;
         // SAFETY: Kernel mode is required; we allocate from partition 3.
-        let (ptr, block_id) = unsafe { crate::me::me_alloc(size, b"UncachedBox\0".as_ptr()) }?;
+        let (ptr, block_id) = unsafe { crate::me::me_alloc(size, c"UncachedBox".as_ptr().cast()) }?;
         let typed_ptr = ptr as *mut T;
 
         // SAFETY: ptr is valid uncached memory of sufficient size.

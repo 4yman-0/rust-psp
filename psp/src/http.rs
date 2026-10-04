@@ -56,7 +56,7 @@ impl HttpClient {
 
         let template_id = unsafe {
             sys::sceHttpCreateTemplate(
-                b"rust-psp/1.0\0".as_ptr() as *mut u8,
+                c"rust-psp/1.0".as_ptr() as *mut u8,
                 1, // HTTP/1.1
                 0,
             )

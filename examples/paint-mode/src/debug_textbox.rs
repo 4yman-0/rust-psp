@@ -38,8 +38,8 @@ fn get_textbox_wipe_rect() -> Styled<Rectangle, PrimitiveStyle<Rgb888>> {
 
 pub fn draw_debug_textbox(disp: &mut Framebuffer, pad_data: &SceCtrlData) {
     // Create a str holding our analog pad X and Y values
-    let mut holder = [' ' as u8; 7];
-    holder[3] = ':' as u8;
+    let mut holder = [b' '; 7];
+    holder[3] = b':';
     pad_data.lx.numtoa(10, &mut holder[..3]);
     pad_data.ly.numtoa(10, &mut holder[4..]);
 

@@ -102,10 +102,13 @@ macro_rules! psp_extern {
             // register. For EABI mappers (i5-i9), all args must be u32.
             // PSP functions with u16 params should use u32 in their
             // declarations (the kernel reads full 32-bit registers).
-            core::mem::transmute($abi(
-                $(core::mem::transmute($arg)),*,
-                core::mem::transmute(func),
-            ))
+			#[allow(unnecessary_transmutes)]
+            {
+				core::mem::transmute($abi(
+	                $(core::mem::transmute($arg)),*,
+	                core::mem::transmute(func),
+	            ))
+			}
         }
     }};
 

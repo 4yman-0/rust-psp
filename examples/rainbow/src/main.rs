@@ -19,7 +19,7 @@ fn psp_main() {
 
         // Cache-through address
         let vram = (0x4000_0000u32 | sys::sceGeEdramGetAddr() as u32) as *mut u32;
-        *&raw mut VRAM = vram;
+        VRAM = vram;
 
         sys::sceDisplaySetFrameBuf(
             vram as *const u8,

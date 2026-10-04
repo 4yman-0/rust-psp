@@ -119,7 +119,7 @@ pub fn on_power_event(
     use core::ffi::c_void;
 
     let cbid = unsafe {
-        crate::sys::sceKernelCreateCallback(b"power_cb\0".as_ptr(), handler, core::ptr::null_mut())
+        crate::sys::sceKernelCreateCallback(c"power_cb".as_ptr().cast(), handler, core::ptr::null_mut())
     };
     if cbid.0 < 0 {
         return Err(PowerError(cbid.0));
@@ -138,7 +138,7 @@ pub fn on_power_event(
 
     let thid = unsafe {
         crate::sys::sceKernelCreateThread(
-            b"power_cb_thread\0".as_ptr(),
+            c"power_cb_thread".as_ptr().cast(),
             sleep_thread,
             crate::DEFAULT_THREAD_PRIORITY,
             4096,

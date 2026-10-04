@@ -28,7 +28,7 @@
 
 use crate::sys::{self, SceSysMemBlockTypes, SceSysMemPartitionId, SceUid};
 use alloc::alloc::{GlobalAlloc, Layout};
-use core::{mem, ptr};
+use core::{mem, ptr, ffi};
 use linked_list_allocator::Heap;
 use spin::Mutex;
 
@@ -344,10 +344,11 @@ fn aeh(_: Layout) -> ! {
 
 #[unsafe(no_mangle)]
 #[cfg(not(feature = "stub-only"))]
-unsafe extern "C" fn memset(ptr: *mut u8, value: u32, num: usize) -> *mut u8 {
-    let mut i = 0;
+unsafe extern "C" fn memset(ptr: *mut ffi::c_void, value: i32, num: usize) -> *mut ffi::c_void {
+	let value = value as u8;
+    let mut i = 0usize;
     while i < num {
-        *ptr.add(i) = value as u8;
+        *ptr.cast::<u8>().add(i) = value;
         i += 1;
     }
     ptr
@@ -355,10 +356,10 @@ unsafe extern "C" fn memset(ptr: *mut u8, value: u32, num: usize) -> *mut u8 {
 
 #[unsafe(no_mangle)]
 #[cfg(not(feature = "stub-only"))]
-unsafe extern "C" fn memcpy(dst: *mut u8, src: *const u8, num: isize) -> *mut u8 {
-    let mut i = 0isize;
+unsafe extern "C" fn memcpy(dst: *mut ffi::c_void, src: *const ffi::c_void, num: usize) -> *mut ffi::c_void {
+    let mut i = 0usize;
     while i < num {
-        *dst.offset(i) = *src.offset(i);
+        *dst.cast::<u8>().add(i) = *src.cast::<u8>().add(i);
         i += 1;
     }
     dst
@@ -366,10 +367,10 @@ unsafe extern "C" fn memcpy(dst: *mut u8, src: *const u8, num: isize) -> *mut u8
 
 #[unsafe(no_mangle)]
 #[cfg(not(feature = "stub-only"))]
-unsafe extern "C" fn memcmp(ptr1: *mut u8, ptr2: *mut u8, num: usize) -> i32 {
-    let mut i = 0;
+unsafe extern "C" fn memcmp(ptr1: *const ffi::c_void, ptr2: *const ffi::c_void, num: usize) -> i32 {
+    let mut i = 0usize;
     while i < num {
-        let diff = *ptr1.add(i) as i32 - *ptr2.add(i) as i32;
+        let diff = *ptr1.cast::<u8>().add(i) as i32 - *ptr2.cast::<u8>().add(i) as i32;
         if diff != 0 {
             return diff;
         }
@@ -380,18 +381,18 @@ unsafe extern "C" fn memcmp(ptr1: *mut u8, ptr2: *mut u8, num: usize) -> i32 {
 
 #[unsafe(no_mangle)]
 #[cfg(not(feature = "stub-only"))]
-unsafe extern "C" fn memmove(dst: *mut u8, src: *mut u8, num: isize) -> *mut u8 {
+unsafe extern "C" fn memmove(dst: *mut ffi::c_void, src: *const ffi::c_void, num: usize) -> *mut ffi::c_void {
     if (dst as usize) < (src as usize) {
-        let mut i = 0isize;
+        let mut i = 0usize;
         while i < num {
-            *dst.offset(i) = *src.offset(i);
+            *dst.cast::<u8>().add(i) = *src.cast::<u8>().add(i);
             i += 1;
         }
     } else {
         let mut i = num;
         while i > 0 {
             i -= 1;
-            *dst.offset(i) = *src.offset(i);
+            *dst.cast::<u8>().add(i) = *src.cast::<u8>().add(i);
         }
     }
     dst
@@ -399,7 +400,7 @@ unsafe extern "C" fn memmove(dst: *mut u8, src: *mut u8, num: isize) -> *mut u8 
 
 #[unsafe(no_mangle)]
 #[cfg(not(feature = "stub-only"))]
-unsafe extern "C" fn strlen(s: *mut u8) -> usize {
+unsafe extern "C" fn strlen(s: *const i8) -> usize {
     let mut len = 0;
     while *s.add(len) != 0 {
         len += 1;

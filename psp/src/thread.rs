@@ -231,10 +231,7 @@ unsafe extern "C" fn trampoline(_args: usize, argp: *mut c_void) -> i32 {
     // Mark as consumed BEFORE running, so Drop won't try to free it
     // even if the thread is terminated mid-execution.
     payload.consumed.store(true, Ordering::Release);
-    match crate::catch_unwind(core::panic::AssertUnwindSafe(closure)) {
-        Ok(code) => code,
-        Err(_) => -0x7FFF_FFFF, // panic sentinel
-    }
+    crate::catch_unwind(core::panic::AssertUnwindSafe(closure)).unwrap_or(-0x7FFF_FFFF)
 }
 
 // ── JoinHandle ──────────────────────────────────────────────────────

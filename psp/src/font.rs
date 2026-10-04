@@ -366,8 +366,8 @@ impl GlyphAtlas {
         }
 
         // No existing row fits — try to add a new row.
-        if fit_row.is_none() {
-            if self.y_cursor + glyph_h <= self.height {
+        if fit_row.is_none()
+            && self.y_cursor + glyph_h <= self.height {
                 let idx = self.rows.len();
                 self.rows.push(AtlasRow {
                     y: self.y_cursor,
@@ -378,11 +378,10 @@ impl GlyphAtlas {
                 self.y_cursor += glyph_h;
                 fit_row = Some(idx);
             }
-        }
 
         // Still no room — evict the LRU row that can fit the glyph height.
-        if fit_row.is_none() {
-            if let Some((evict_idx, _)) = self
+        if fit_row.is_none()
+            && let Some((evict_idx, _)) = self
                 .rows
                 .iter()
                 .enumerate()
@@ -397,7 +396,6 @@ impl GlyphAtlas {
                 row.lru_stamp = stamp;
                 fit_row = Some(evict_idx);
             }
-        }
 
         let row_idx = fit_row?;
         let row = &mut self.rows[row_idx];

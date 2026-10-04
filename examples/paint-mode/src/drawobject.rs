@@ -162,7 +162,7 @@ impl DrawObject {
                 .stroke_width(1)
                 .build(),
         );
-        let line_2 = line_1.clone();
+        let line_2 = line_1;
         let mut x = [line_1, line_2];
         grow_x_by(&mut x, size as _);
         Self::X(x)
@@ -178,7 +178,7 @@ fn shrink_triangle(styled_tri: &mut StyledTri) {
 }
 
 fn grow_triangle_by(styled_tri: &mut StyledTri, grow_by: i32) {
-    let mut tri = &mut styled_tri.primitive;
+    let tri = &mut styled_tri.primitive;
     tri.vertices[0].y -= grow_by;
 
     tri.vertices[1].x -= grow_by;
@@ -218,13 +218,13 @@ fn shrink_x(styled_x: &mut StyledX) {
 }
 
 fn grow_x_by(styled_x: &mut StyledX, grow_by: i32) {
-    let mut line_1 = &mut styled_x[0].primitive;
+    let line_1 = &mut styled_x[0].primitive;
     line_1.start.x -= grow_by;
     line_1.start.y -= grow_by;
     line_1.end.x += grow_by;
     line_1.end.y += grow_by;
 
-    let mut line_2 = &mut styled_x[1].primitive;
+    let line_2 = &mut styled_x[1].primitive;
     line_2.start.x -= grow_by;
     line_2.start.y += grow_by;
     line_2.end.x += grow_by;

@@ -6,7 +6,7 @@
 #![allow(stable_features, internal_features, clippy::missing_safety_doc)]
 // Nightly features still required for PSP target:
 #![feature(
-    asm_experimental_arch, // MIPS inline assembly
+	asm_experimental_arch, // MIPS inline assembly
     core_intrinsics,       // core::intrinsics (unreachable, etc.)
     c_variadic,            // variadic extern "C" functions
     rustc_attrs            // #[rustc_std_internal_symbol]
@@ -122,9 +122,9 @@ mod benchmark;
 #[cfg(not(feature = "stub-only"))]
 pub use benchmark::*;
 
-#[cfg(not(feature = "stub-only"))]
+//#[cfg(not(feature = "stub-only"))]
 mod constants;
-#[cfg(not(feature = "stub-only"))]
+//#[cfg(not(feature = "stub-only"))]
 pub use constants::*;
 
 #[doc(hidden)]
@@ -191,48 +191,51 @@ core::arch::global_asm!(
 
 #[doc(hidden)]
 #[macro_export]
+#[cfg(feature = "std")]
 macro_rules! _start {
     ($psp_main:expr, $argc:expr, $argv:expr) => {{	
-		#[cfg(feature = "std")]
-        {
-			// In std mode, call psp_main directly. The user crate uses #![no_main] to
-			// prevent the compiler from generating a conflicting `main` entry point.
-			// PSP handles its own entry via module_start -> main_thread -> _start!.
-			// PSP PAL init is a no-op (PSP initialization is handled by module_start).
-			let _ = std::panic::catch_unwind($psp_main);
-        	0
-		}
-		#[cfg(not(feature = "std"))]
-		{
-	        unsafe fn init_cwd(arg0: *mut u8) {
-	            unsafe {
-	                let mut len = 0;
-	                while *arg0.add(len) != 0 {
-	                    len += 1;
-	                }
+		// In std mode, call psp_main directly. The user crate uses #![no_main] to
+		// prevent the compiler from generating a conflicting `main` entry point.
+		// PSP handles its own entry via module_start -> main_thread -> _start!.
+		// PSP PAL init is a no-op (PSP initialization is handled by module_start).
+		let _ = std::panic::catch_unwind($psp_main);
+       	0
+	}};
+}
 
-	                // Truncate until last '/'.
-	                while len > 0 && *arg0.add(len - 1) != b'/' {
-	                    len -= 1;
-	                }
+#[doc(hidden)]
+#[macro_export]
+#[cfg(not(feature = "std"))]
+macro_rules! _start {
+    ($psp_main:expr, $argc:expr, $argv:expr) => {{	
+        unsafe fn init_cwd(arg0: *mut u8) {
+            unsafe {
+                let mut len = 0;
+                while *arg0.add(len) != 0 {
+                    len += 1;
+                }
 
-	                if len > 0 {
-	                    let tmp = *arg0.add(len);
-	                    *arg0.add(len) = 0;
-	                    $crate::sys::sceIoChdir(arg0 as *const u8);
-	                    *arg0.add(len) = tmp;
-	                }
-	            }
-	        }
+                // Truncate until last '/'.
+                while len > 0 && *arg0.add(len - 1) != b'/' {
+                    len -= 1;
+                }
 
-	        if $argc > 0 {
-	            unsafe { init_cwd($argv as *mut u8) };
-	        }
+                if len > 0 {
+                    let tmp = *arg0.add(len);
+                    *arg0.add(len) = 0;
+                    $crate::sys::sceIoChdir(arg0 as *const u8);
+                    *arg0.add(len) = tmp;
+                }
+            }
+        }
 
-	        let _ = $crate::catch_unwind($psp_main);
+        if $argc > 0 {
+            unsafe { init_cwd($argv as *mut u8) };
+        }
 
-	        0
-		}
+        let _ = $crate::catch_unwind($psp_main);
+
+        0
     }};
 }
 

@@ -258,11 +258,11 @@ impl MeExecutor {
 
         // SAFETY: Kernel mode is required. We allocate from partition 3.
         let (shared_ptr, shared_block) =
-            unsafe { me_alloc(shared_size, b"MeExecState\0".as_ptr()) }?;
+            unsafe { me_alloc(shared_size, c"MeExecState".as_ptr().cast()) }?;
         let shared = shared_ptr as *mut MeSharedState;
 
         let (stack_base, stack_block) =
-            match unsafe { me_alloc(stack_size, b"MeExecStack\0".as_ptr()) } {
+            match unsafe { me_alloc(stack_size, c"MeExecStack".as_ptr().cast()) } {
                 Ok(v) => v,
                 Err(e) => {
                     // Clean up the shared state allocation

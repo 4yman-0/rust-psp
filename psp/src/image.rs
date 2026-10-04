@@ -167,7 +167,7 @@ pub fn decode_bmp(data: &[u8]) -> Result<DecodedImage, ImageError> {
         _ => return Err(ImageError::InvalidBmp("only 24/32-bit supported")),
     };
 
-    let row_stride = ((width * (bpp as u32) + 31) / 32) * 4;
+    let row_stride = (width * (bpp as u32)).div_ceil(32) * 4;
     let mut output = alloc::vec![0u8; (width * height * out_bpp) as usize];
 
     for y in 0..height {

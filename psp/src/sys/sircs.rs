@@ -1,6 +1,6 @@
-/// Sony Integrated Remote Control System Library.
-///
-/// This module contains the imports for the kernel's remote control routines.
+//! Sony Integrated Remote Control System Library.
+//!
+//! This module contains the imports for the kernel's remote control routines.
 
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]

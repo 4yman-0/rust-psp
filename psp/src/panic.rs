@@ -69,12 +69,12 @@ fn panic_impl(info: &PanicInfo) -> ! {
                 self.message.as_str().unwrap_or_default()
             );
 
-            self.string.get_or_insert_with(|| s)
+            self.string.get_or_insert(s)
         }
     }
 
     impl<'a> BoxMeUp for PanicPayload<'a> {
-        fn take_box(&mut self) -> Box<(dyn Any + Send + 'static)> {
+        fn take_box(&mut self) -> Box<dyn Any + Send + 'static> {
             let contents = mem::take(self.fill());
             Box::new(contents)
         }
@@ -94,7 +94,7 @@ fn panic_impl(info: &PanicInfo) -> ! {
         }
     }
 
-    rust_panic_with_hook(&mut PanicPayload::new(&info));
+    rust_panic_with_hook(&mut PanicPayload::new(info));
 }
 
 /// Central point for dispatching panics.

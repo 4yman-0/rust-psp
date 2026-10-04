@@ -17,6 +17,7 @@ psp::module!("savedata_example", 1, 1);
 
 static mut LIST: psp::Align16<[u32; 262144]> = psp::Align16([0; 262144]);
 
+#[allow(unsafe_op_in_unsafe_fn)]
 unsafe fn setup_gu() {
     sys::sceGuInit();
     sys::sceGuStart(GuContextType::Direct, &raw mut LIST as *mut c_void);

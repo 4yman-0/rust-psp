@@ -119,7 +119,7 @@ fn run_dialog(params: &mut UtilityMsgDialogParams) -> Result<DialogResult, Dialo
 
     for _ in 0..MAX_DIALOG_ITERATIONS {
         let status = unsafe { crate::sys::sceUtilityMsgDialogGetStatus() };
-        if status == 0 || status < 0 {
+        if status <= 0 {
             break;
         }
 

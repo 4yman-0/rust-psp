@@ -52,7 +52,7 @@ pub fn setup_exit_callback() -> Result<(), CallbackError> {
 
     unsafe extern "C" fn exit_thread(_args: usize, _argp: *mut c_void) -> i32 {
         let cbid = unsafe {
-            sceKernelCreateCallback(b"exit_callback\0".as_ptr(), exit_callback, ptr::null_mut())
+            sceKernelCreateCallback(c"exit_callback".as_ptr().cast(), exit_callback, ptr::null_mut())
         };
         if cbid.0 >= 0 {
             unsafe { sceKernelRegisterExitCallback(cbid) };
@@ -63,7 +63,7 @@ pub fn setup_exit_callback() -> Result<(), CallbackError> {
 
     let thid = unsafe {
         crate::sys::sceKernelCreateThread(
-            b"exit_thread\0".as_ptr(),
+            c"exit_thread".as_ptr().cast(),
             exit_thread,
             crate::DEFAULT_THREAD_PRIORITY,
             4096,
@@ -96,7 +96,7 @@ pub fn setup_exit_callback() -> Result<(), CallbackError> {
 pub fn register_exit_callback(
     handler: unsafe extern "C" fn(i32, i32, *mut c_void) -> i32,
 ) -> Result<SceUid, CallbackError> {
-    let cbid = unsafe { sceKernelCreateCallback(b"exit_cb\0".as_ptr(), handler, ptr::null_mut()) };
+    let cbid = unsafe { sceKernelCreateCallback(c"exit_cb".as_ptr().cast(), handler, ptr::null_mut()) };
 
     if cbid.0 < 0 {
         return Err(CallbackError(cbid.0));

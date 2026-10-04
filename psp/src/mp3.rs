@@ -99,9 +99,8 @@ impl Mp3Decoder {
         if ret < 0 {
             return Err(Mp3Error(ret));
         }
-        Self::create(data).map_err(|e| {
+        Self::create(data).inspect_err(|_e| {
             unsafe { sys::sceMp3TermResource() };
-            e
         })
     }
 
