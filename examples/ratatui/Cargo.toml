@@ -24,3 +24,6 @@ mousefood = { git = "https://github.com/j-g00da/mousefood", rev = "1028ac24f8392
 #
 # This patch disables byte alignment as a workaround.
 # See <https://git.sr.ht/~sajattack/unicode-width/commit/114ac4742ac29a7b69be8e0e7b1e45af43ed6d83>
+
+[lints]
+workspace = true

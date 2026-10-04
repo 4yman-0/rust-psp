@@ -9,3 +9,6 @@ license = "MIT"
 psp = { path = "../../psp", features = ["embedded-graphics"] }
 embedded-graphics = { version = "0.8.1", features = ["fixed_point"]}
 numtoa = "0.2"
+
+[lints]
+workspace = true

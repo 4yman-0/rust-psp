@@ -674,7 +674,7 @@ pub unsafe extern "C" fn sceGumUpdateMatrix() {
 }
 
 fn gum_normalize(v: &mut ScePspFVector3) {
-    let l = unsafe {
+    let l = {
         use core::intrinsics::sqrtf32;
         sqrtf32((v.x * v.x) + (v.y * v.y) + (v.z * v.z))
     };

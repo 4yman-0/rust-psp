@@ -14,7 +14,7 @@ macro_rules! nan_aware_vfpu_op {
             } else if y.is_nan() && !x.is_nan() {
                 out = x;
             } else if x.is_nan() && y.is_nan() {
-                out = core::f32::NAN;
+                out = f32::NAN;
             } else {
                 vfpu_asm!(
                     "mfc1 {tmp1}, {x}",

@@ -368,7 +368,7 @@ impl AvcDecoder {
 
     /// Get the SceMpeg handle for low-level access.
     fn mpeg(&self) -> crate::sys::SceMpeg {
-        unsafe { core::mem::transmute(self.mpeg_storage as *mut *mut c_void) }
+        unsafe { core::mem::transmute(self.mpeg_storage) }
     }
 
     /// Decode one H.264 access unit.

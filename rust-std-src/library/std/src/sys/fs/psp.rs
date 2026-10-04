@@ -9,6 +9,14 @@ use crate::sys::time::SystemTime;
 use crate::sys::unsupported;
 use crate::time::Duration;
 
+#[derive(Debug, Clone, Default)]
+#[non_exhaustive]
+pub struct ExtraHomeDirs {}
+
+#[derive(Debug, Clone, Default)]
+#[non_exhaustive]
+pub struct ExtraMediaDirs {}
+
 unsafe extern "C" {
     fn __psp_io_open(file: *const u8, flags: i32, mode: i32) -> i32;
     fn __psp_io_close(fd: i32) -> i32;
@@ -479,7 +487,7 @@ impl File {
         false
     }
 
-    pub fn read_buf(&self, mut cursor: BorrowedCursor<'_>) -> io::Result<()> {
+    pub fn read_buf(&self, mut cursor: BorrowedCursor<'_, u8>) -> io::Result<()> {
         // BorrowedCursor API as of nightly-2026-04-11:
         //   `ensure_init(&mut self) -> &mut [u8]`
         //   `advance_checked(&mut self, n: usize) -> &mut Self`
@@ -618,6 +626,10 @@ pub fn rename(old: &Path, new: &Path) -> io::Result<()> {
 }
 
 pub fn set_perm(_path: &Path, _perm: FilePermissions) -> io::Result<()> {
+    unsupported()
+}
+
+pub fn set_perm_nofollow(_path: &Path, _perm: FilePermissions) -> io::Result<()> {
     unsupported()
 }
 

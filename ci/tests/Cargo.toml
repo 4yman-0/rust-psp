@@ -8,3 +8,6 @@ license = "MIT"
 [dependencies]
 psp = { path = "../../psp", features = ["embedded-graphics"] }
 embedded-graphics = { version = "0.8.1", features = ["fixed_point"]}
+
+[lints]
+workspace = true

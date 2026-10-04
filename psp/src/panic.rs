@@ -10,11 +10,11 @@ use crate::sys;
 use core::{
     any::Any,
     mem::{self, ManuallyDrop},
-    panic::{Location, PanicInfo, PanicMessage, PanicPayload as BoxMeUp},
+    panic::{Location, PanicInfo, PanicMessage},
 };
 
 #[cfg(not(feature = "std"))]
-use alloc::{boxed::Box, string::String};
+use alloc::{boxed::Box, string::String, panicking::PanicPayload as BoxMeUp};
 
 #[cfg(not(feature = "std"))]
 #[link(name = "unwind", kind = "static")]
@@ -73,10 +73,10 @@ fn panic_impl(info: &PanicInfo) -> ! {
         }
     }
 
-    unsafe impl<'a> BoxMeUp for PanicPayload<'a> {
-        fn take_box(&mut self) -> *mut (dyn Any + Send) {
+    impl<'a> BoxMeUp for PanicPayload<'a> {
+        fn take_box(&mut self) -> Box<(dyn Any + Send + 'static)> {
             let contents = mem::take(self.fill());
-            Box::into_raw(Box::new(contents))
+            Box::new(contents)
         }
 
         fn get(&mut self) -> &(dyn Any + Send) {
@@ -155,7 +155,7 @@ unsafe extern "C-unwind" {
 #[cfg(not(feature = "std"))]
 #[allow(unsafe_op_in_unsafe_fn)]
 fn rust_panic(msg: &mut dyn BoxMeUp) -> ! {
-    let code = unsafe {
+    let code = {
         let obj = msg;
         panic_unwind::__rust_start_panic(obj as _)
     };
@@ -190,7 +190,7 @@ pub fn catch_unwind<R, F: FnOnce() -> R>(f: F) -> Result<R, Box<dyn Any + Send>>
     let data_ptr = &mut data as *mut _ as *mut u8;
 
     return unsafe {
-        if core::intrinsics::catch_unwind(do_call::<F, R>, data_ptr, do_catch::<F, R>) == 0 {
+        if !core::intrinsics::catch_unwind(do_call::<F, R>, data_ptr, do_catch::<F, R>) {
             Ok(ManuallyDrop::into_inner(data.r))
         } else {
             Err(ManuallyDrop::into_inner(data.p))

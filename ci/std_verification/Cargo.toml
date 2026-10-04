@@ -7,3 +7,6 @@ license = "MIT"
 
 [dependencies]
 psp = { path = "../../psp", features = ["std"] }
+
+[lints]
+workspace = true

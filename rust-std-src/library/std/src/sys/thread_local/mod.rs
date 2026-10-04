@@ -30,11 +30,15 @@ cfg_select! {
         target_os = "zkvm",
         target_os = "trusty",
         target_os = "vexos",
-        target_os = "psp",
     ) => {
         mod no_threads;
         pub use no_threads::{EagerStorage, LazyStorage, thread_local_inner};
         pub(crate) use no_threads::{LocalPointer, local_pointer};
+    }
+    target_os = "psp" => {
+        mod psp_no_threads;
+        pub use psp_no_threads::{EagerStorage, LazyStorage, thread_local_inner};
+        pub(crate) use psp_no_threads::{LocalPointer, local_pointer};
     }
     target_thread_local => {
         mod native;

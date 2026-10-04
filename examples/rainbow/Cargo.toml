@@ -10,3 +10,6 @@ license = "MIT"
 
 [dependencies]
 psp = { path = "../../psp" }
+
+[lints]
+workspace = true

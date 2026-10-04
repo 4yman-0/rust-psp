@@ -109,7 +109,7 @@ impl Savedata {
     pub fn save(&self, save_name: &[u8; 20], data: &[u8]) -> Result<(), SavedataError> {
         let mut data_buf = Vec::from(data);
 
-        let mut sfo = UtilitySavedataSFOParam {
+        let sfo = UtilitySavedataSFOParam {
             title: self.title,
             savedata_title: [0u8; 128],
             detail: self.detail,

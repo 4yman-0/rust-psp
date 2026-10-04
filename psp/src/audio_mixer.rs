@@ -215,7 +215,7 @@ impl Mixer {
         samples: &'static [i16],
     ) -> Result<(), MixerError> {
         // Buffer must have an even number of elements (interleaved stereo pairs).
-        if samples.len() % 2 != 0 {
+        if samples.len().is_multiple_of(2) {
             return Err(MixerError::AudioError(-1));
         }
         let mut channels = self.channels.lock();

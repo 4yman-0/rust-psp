@@ -1,3 +1,4 @@
+use crate::fmt;
 use crate::io::ErrorKind;
 
 /// PSP error codes are negative values. The kernel returns them as the
@@ -37,4 +38,8 @@ pub fn decode_error_kind(code: i32) -> ErrorKind {
 
 pub fn error_string(errno: i32) -> String {
     format!("PSP error code 0x{:08X}", errno as u32)
+}
+
+pub fn format_error(errno: i32, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+	write!(f, "PSP error code 0x{:08X}", errno as u32)
 }

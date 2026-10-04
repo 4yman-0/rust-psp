@@ -189,53 +189,50 @@ core::arch::global_asm!(
     "#
 );
 
-// In std mode, call psp_main directly. The user crate uses #![no_main] to
-// prevent the compiler from generating a conflicting `main` entry point.
-// PSP handles its own entry via module_start -> main_thread -> _start!.
-// PSP PAL init is a no-op (PSP initialization is handled by module_start).
-#[cfg(feature = "std")]
 #[doc(hidden)]
 #[macro_export]
 macro_rules! _start {
-    ($psp_main:expr, $argc:expr, $argv:expr) => {{
-        let _ = std::panic::catch_unwind($psp_main);
-        0
-    }};
-}
+    ($psp_main:expr, $argc:expr, $argv:expr) => {{	
+		#[cfg(feature = "std")]
+        {
+			// In std mode, call psp_main directly. The user crate uses #![no_main] to
+			// prevent the compiler from generating a conflicting `main` entry point.
+			// PSP handles its own entry via module_start -> main_thread -> _start!.
+			// PSP PAL init is a no-op (PSP initialization is handled by module_start).
+			let _ = std::panic::catch_unwind($psp_main);
+        	0
+		}
+		#[cfg(not(feature = "std"))]
+		{
+	        unsafe fn init_cwd(arg0: *mut u8) {
+	            unsafe {
+	                let mut len = 0;
+	                while *arg0.add(len) != 0 {
+	                    len += 1;
+	                }
 
-#[cfg(not(feature = "std"))]
-#[doc(hidden)]
-#[macro_export]
-macro_rules! _start {
-    ($psp_main:expr, $argc:expr, $argv:expr) => {{
-        unsafe fn init_cwd(arg0: *mut u8) {
-            unsafe {
-                let mut len = 0;
-                while *arg0.add(len) != 0 {
-                    len += 1;
-                }
+	                // Truncate until last '/'.
+	                while len > 0 && *arg0.add(len - 1) != b'/' {
+	                    len -= 1;
+	                }
 
-                // Truncate until last '/'.
-                while len > 0 && *arg0.add(len - 1) != b'/' {
-                    len -= 1;
-                }
+	                if len > 0 {
+	                    let tmp = *arg0.add(len);
+	                    *arg0.add(len) = 0;
+	                    $crate::sys::sceIoChdir(arg0 as *const u8);
+	                    *arg0.add(len) = tmp;
+	                }
+	            }
+	        }
 
-                if len > 0 {
-                    let tmp = *arg0.add(len);
-                    *arg0.add(len) = 0;
-                    $crate::sys::sceIoChdir(arg0 as *const u8);
-                    *arg0.add(len) = tmp;
-                }
-            }
-        }
+	        if $argc > 0 {
+	            unsafe { init_cwd($argv as *mut u8) };
+	        }
 
-        if $argc > 0 {
-            unsafe { init_cwd($argv as *mut u8) };
-        }
+	        let _ = $crate::catch_unwind($psp_main);
 
-        let _ = $crate::catch_unwind($psp_main);
-
-        0
+	        0
+		}
     }};
 }
 
