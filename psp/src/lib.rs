@@ -193,21 +193,21 @@ core::arch::global_asm!(
 #[macro_export]
 #[cfg(feature = "std")]
 macro_rules! _start {
-    ($psp_main:expr, $argc:expr, $argv:expr) => {{	
-		// In std mode, call psp_main directly. The user crate uses #![no_main] to
-		// prevent the compiler from generating a conflicting `main` entry point.
-		// PSP handles its own entry via module_start -> main_thread -> _start!.
-		// PSP PAL init is a no-op (PSP initialization is handled by module_start).
-		let _ = std::panic::catch_unwind($psp_main);
-       	0
-	}};
+    ($psp_main:expr, $argc:expr, $argv:expr) => {{
+        // In std mode, call psp_main directly. The user crate uses #![no_main] to
+        // prevent the compiler from generating a conflicting `main` entry point.
+        // PSP handles its own entry via module_start -> main_thread -> _start!.
+        // PSP PAL init is a no-op (PSP initialization is handled by module_start).
+        let _ = std::panic::catch_unwind($psp_main);
+        0
+    }};
 }
 
 #[doc(hidden)]
 #[macro_export]
 #[cfg(not(feature = "std"))]
 macro_rules! _start {
-    ($psp_main:expr, $argc:expr, $argv:expr) => {{	
+    ($psp_main:expr, $argc:expr, $argv:expr) => {{
         unsafe fn init_cwd(arg0: *mut u8) {
             unsafe {
                 let mut len = 0;

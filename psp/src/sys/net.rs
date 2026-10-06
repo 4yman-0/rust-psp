@@ -1309,7 +1309,13 @@ pub union SceNetApctlInfo {
 }
 
 pub type SceNetApctlHandler = Option<
-    unsafe extern "C" fn(old_state: i32, new_state: i32, event: i32, error: i32, p_arg: *mut c_void),
+    unsafe extern "C" fn(
+        old_state: i32,
+        new_state: i32,
+        event: i32,
+        error: i32,
+        p_arg: *mut c_void,
+    ),
 >;
 
 psp_extern! {

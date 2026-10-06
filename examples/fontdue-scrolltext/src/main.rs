@@ -63,10 +63,7 @@ fn psp_main() {
     // Get appropriate x positions for every char in the string
     let mut layout = fontdue::layout::Layout::new(fontdue::layout::CoordinateSystem::PositiveYUp);
     layout.reset(&fontdue::layout::LayoutSettings::default());
-    layout.append(
-        &[&font],
-        &fontdue::layout::TextStyle::new(TEXT, 60.0, 0),
-    );
+    layout.append(&[&font], &fontdue::layout::TextStyle::new(TEXT, 60.0, 0));
     let x_positions = layout
         .glyphs()
         .iter()

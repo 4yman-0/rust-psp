@@ -119,7 +119,11 @@ pub fn on_power_event(
     use core::ffi::c_void;
 
     let cbid = unsafe {
-        crate::sys::sceKernelCreateCallback(c"power_cb".as_ptr().cast(), handler, core::ptr::null_mut())
+        crate::sys::sceKernelCreateCallback(
+            c"power_cb".as_ptr().cast(),
+            handler,
+            core::ptr::null_mut(),
+        )
     };
     if cbid.0 < 0 {
         return Err(PowerError(cbid.0));

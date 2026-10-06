@@ -14,7 +14,7 @@ use core::{
 };
 
 #[cfg(not(feature = "std"))]
-use alloc::{boxed::Box, string::String, panicking::PanicPayload as BoxMeUp};
+use alloc::{boxed::Box, panicking::PanicPayload as BoxMeUp, string::String};
 
 #[cfg(not(feature = "std"))]
 #[link(name = "unwind", kind = "static")]

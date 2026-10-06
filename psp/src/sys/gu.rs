@@ -1659,17 +1659,17 @@ pub unsafe extern "C" fn sceGuStart(context_type: GuContextType, list: *mut c_vo
     }
 
     if let GuContextType::Direct = CURR_CONTEXT
-        && DRAW_BUFFER.frame_width != 0 {
-            send_command_i(
-                GeCommand::FrameBufPtr,
-                DRAW_BUFFER.frame_buffer as i32 & 0xffffff,
-            );
-            send_command_i(
-                GeCommand::FrameBufWidth,
-                ((DRAW_BUFFER.frame_buffer as u32 & 0xff00_0000) >> 8) as i32
-                    | DRAW_BUFFER.frame_width,
-            );
-        }
+        && DRAW_BUFFER.frame_width != 0
+    {
+        send_command_i(
+            GeCommand::FrameBufPtr,
+            DRAW_BUFFER.frame_buffer as i32 & 0xffffff,
+        );
+        send_command_i(
+            GeCommand::FrameBufWidth,
+            ((DRAW_BUFFER.frame_buffer as u32 & 0xff00_0000) >> 8) as i32 | DRAW_BUFFER.frame_width,
+        );
+    }
 }
 
 /// Finish current display list and go back to the parent context

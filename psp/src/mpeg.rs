@@ -282,8 +282,7 @@ impl AvcDecoder {
 
         // Step 5: Create sceMpeg instance with mode + DDR top.
         let mpeg_storage = Box::into_raw(Box::new(core::ptr::null_mut::<c_void>()));
-        let mpeg: crate::sys::SceMpeg =
-            unsafe { core::mem::transmute(mpeg_storage) };
+        let mpeg: crate::sys::SceMpeg = unsafe { core::mem::transmute(mpeg_storage) };
         let ret = unsafe {
             crate::sys::sceMpegCreate(
                 mpeg,

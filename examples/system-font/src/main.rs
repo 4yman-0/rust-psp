@@ -6,11 +6,11 @@
 use core::ffi::c_void;
 
 use psp::font::{FontLib, FontRenderer};
-use psp::sys::{SceFontFamilyCode, SceFontLanguageCode, SceFontStyleCode};
 use psp::sys::{
     self, ClearBuffer, DisplayPixelFormat, GuContextType, GuState, GuSyncBehavior, GuSyncMode,
     TexturePixelFormat,
 };
+use psp::sys::{SceFontFamilyCode, SceFontLanguageCode, SceFontStyleCode};
 use psp::vram_alloc::get_vram_allocator;
 use psp::{BUF_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH};
 

@@ -28,7 +28,7 @@
 
 use crate::sys::{self, SceSysMemBlockTypes, SceSysMemPartitionId, SceUid};
 use alloc::alloc::{GlobalAlloc, Layout};
-use core::{mem, ptr, ffi};
+use core::{ffi, mem, ptr};
 use linked_list_allocator::Heap;
 use spin::Mutex;
 
@@ -345,7 +345,7 @@ fn aeh(_: Layout) -> ! {
 #[unsafe(no_mangle)]
 #[cfg(not(feature = "stub-only"))]
 unsafe extern "C" fn memset(ptr: *mut ffi::c_void, value: i32, num: usize) -> *mut ffi::c_void {
-	let value = value as u8;
+    let value = value as u8;
     let mut i = 0usize;
     while i < num {
         *ptr.cast::<u8>().add(i) = value;
@@ -356,7 +356,11 @@ unsafe extern "C" fn memset(ptr: *mut ffi::c_void, value: i32, num: usize) -> *m
 
 #[unsafe(no_mangle)]
 #[cfg(not(feature = "stub-only"))]
-unsafe extern "C" fn memcpy(dst: *mut ffi::c_void, src: *const ffi::c_void, num: usize) -> *mut ffi::c_void {
+unsafe extern "C" fn memcpy(
+    dst: *mut ffi::c_void,
+    src: *const ffi::c_void,
+    num: usize,
+) -> *mut ffi::c_void {
     let mut i = 0usize;
     while i < num {
         *dst.cast::<u8>().add(i) = *src.cast::<u8>().add(i);
@@ -381,7 +385,11 @@ unsafe extern "C" fn memcmp(ptr1: *const ffi::c_void, ptr2: *const ffi::c_void, 
 
 #[unsafe(no_mangle)]
 #[cfg(not(feature = "stub-only"))]
-unsafe extern "C" fn memmove(dst: *mut ffi::c_void, src: *const ffi::c_void, num: usize) -> *mut ffi::c_void {
+unsafe extern "C" fn memmove(
+    dst: *mut ffi::c_void,
+    src: *const ffi::c_void,
+    num: usize,
+) -> *mut ffi::c_void {
     if (dst as usize) < (src as usize) {
         let mut i = 0usize;
         while i < num {

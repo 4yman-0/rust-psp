@@ -366,18 +366,17 @@ impl GlyphAtlas {
         }
 
         // No existing row fits — try to add a new row.
-        if fit_row.is_none()
-            && self.y_cursor + glyph_h <= self.height {
-                let idx = self.rows.len();
-                self.rows.push(AtlasRow {
-                    y: self.y_cursor,
-                    height: glyph_h,
-                    x_cursor: 0,
-                    lru_stamp: stamp,
-                });
-                self.y_cursor += glyph_h;
-                fit_row = Some(idx);
-            }
+        if fit_row.is_none() && self.y_cursor + glyph_h <= self.height {
+            let idx = self.rows.len();
+            self.rows.push(AtlasRow {
+                y: self.y_cursor,
+                height: glyph_h,
+                x_cursor: 0,
+                lru_stamp: stamp,
+            });
+            self.y_cursor += glyph_h;
+            fit_row = Some(idx);
+        }
 
         // Still no room — evict the LRU row that can fit the glyph height.
         if fit_row.is_none()
@@ -387,15 +386,15 @@ impl GlyphAtlas {
                 .enumerate()
                 .filter(|(_, r)| r.height >= glyph_h)
                 .min_by_key(|(_, r)| r.lru_stamp)
-            {
-                // Remove all cached glyphs in this row.
-                self.cache.retain(|g| g.row_idx != evict_idx);
-                let row = &mut self.rows[evict_idx];
-                row.x_cursor = 0;
-                // Keep the original row height to avoid overwriting adjacent rows.
-                row.lru_stamp = stamp;
-                fit_row = Some(evict_idx);
-            }
+        {
+            // Remove all cached glyphs in this row.
+            self.cache.retain(|g| g.row_idx != evict_idx);
+            let row = &mut self.rows[evict_idx];
+            row.x_cursor = 0;
+            // Keep the original row height to avoid overwriting adjacent rows.
+            row.lru_stamp = stamp;
+            fit_row = Some(evict_idx);
+        }
 
         let row_idx = fit_row?;
         let row = &mut self.rows[row_idx];
