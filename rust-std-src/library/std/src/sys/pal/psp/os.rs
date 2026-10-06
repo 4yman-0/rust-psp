@@ -84,7 +84,7 @@ pub fn exit(code: i32) -> ! {
     let _ = code;
     unsafe { __psp_exit_game() };
     // If exit_game returns somehow, abort
-    crate::intrinsics::abort()
+    crate::process::abort()
 }
 
 pub fn getpid() -> u32 {
